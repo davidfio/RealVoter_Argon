@@ -67,7 +67,7 @@ public class PlayerBehaviour : NetworkBehaviour
 
     public void ChangeClientName()
     {
-        if(inputField.GetComponent<Text>().text == "")
+        if(inputField != null)
         {
             string clientNewName = inputField.GetComponent<Text>().text;
             if (clientNewName != "")

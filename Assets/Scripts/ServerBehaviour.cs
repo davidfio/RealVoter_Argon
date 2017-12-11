@@ -121,6 +121,18 @@ public class ServerBehaviour : NetworkBehaviour
         for (int i = startCSVIndex; i < endCSVIndex; i++)
         {
             j++;
+
+            //Controlliamo se la stringa ha il carattere $ e in caso lo escludiamo
+            if (readedData[i].Contains("$"))
+            {
+                //Qui dobbiamo fare in modo che questa risposta venga segnata come corretta con un bool da qualche parte!!!
+                //Answerstringlist credo debba diventare una classe che abbia come proprietà il bool corretta
+                //oltre alla stringa di testo della risposta stessa! E poi riadattare tutti i metodi di conseguenza.
+
+                readedData[i] = readedData[i].Replace("$", "");
+                Debug.Log("TROVATO $: " + readedData[i].ToString());
+            }
+
             answerStringList.Insert(j, readedData[i]);
             Debug.Log(answerStringList[j]);
         }
@@ -192,6 +204,21 @@ public class ServerBehaviour : NetworkBehaviour
         timerCounter = 0;
     }
 
+    //Termina la fase in cui si può rispondere. Disattiva tutti i bottoni sul client e manda le risposte al graph
+    public void StopQuestion ()
+    {
+        CleanPlayerList();
+
+        foreach (var player in playerList)
+        {
+            player.GetComponent<PlayerBehaviour>().RpcDeactiveButton();
+            player.GetComponent<PlayerBehaviour>().RpcSelectedAnswer();
+        }
+
+        buttonStop.SetActive(false);
+        StartCoroutine(refGL.CallGraphSetup());
+    }
+
     // Mette tutti i giocatori nella lista PlayerList
     public IEnumerator AddPlayerCO()
     {
@@ -219,7 +246,7 @@ public class ServerBehaviour : NetworkBehaviour
 
         SetAnswerOnClient();
 
-        StartCoroutine(TimerCO());
+        //StartCoroutine(TimerCO());
     }
 
 

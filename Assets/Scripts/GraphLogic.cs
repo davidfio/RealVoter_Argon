@@ -69,9 +69,18 @@ public class GraphLogic : MonoBehaviour {
             newBar.gameObject.GetComponent<RectTransform>().localScale = Vector3.one;
             newBar.gameObject.GetComponent<Image>().color = answerColors[i];
             answerBarList.Add(newBar);
+
             //Qua inseriamo il testo e il colore della risposta e della percentuale
             Debug.LogWarning("answer in graph: " + refSB.answerStringList[i]);
-            answerBarList[i].gameObject.transform.GetChild(1).GetComponent<Text>().text = refSB.answerStringList[i];
+
+            //Fare in modo che appaia come testo della risposta solo il numero tra parentesi così --> (num)
+            string answerTextMod = refSB.answerStringList[i];
+
+            int startIndex;
+            startIndex = answerTextMod.IndexOf(")");
+            answerTextMod = answerTextMod.Remove(startIndex+1);
+
+            answerBarList[i].gameObject.transform.GetChild(1).GetComponent<Text>().text = answerTextMod;
             //answerBarList[i].gameObject.transform.GetChild(1).GetComponent<Text>().color = answerColors[i];
             //answerBarList[i].gameObject.transform.GetChild(0).GetComponent<Text>().color = answerColors[i];
         }
