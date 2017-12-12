@@ -120,7 +120,7 @@ public class PlayerBehaviour : NetworkBehaviour
     public void DoSelectAnswer ()
     {
         lastClicked = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
-        lastClicked.GetComponent<Image>().color = Color.green;
+        lastClicked.GetComponent<Image>().color = new Color32(109, 200, 241, 255);
         lastClicked.GetComponent<Button>().Select();
         
         for (int i = 0; i < listButton.Count; i++)

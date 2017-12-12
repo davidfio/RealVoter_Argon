@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GraphLogic : MonoBehaviour {
 
     public int nAnswers;
-    public float graphIncr, finalPerc;
+    public float graphIncr, finalPerc, sameAnswers, percSingleClient;
     public List<GameObject> answerBarList = new List<GameObject>();
     public GameObject barPrefab;
 
@@ -116,10 +116,10 @@ public class GraphLogic : MonoBehaviour {
     { 
         graphIncr = 1f / clientAnswersList.Count;
         //Serve a far comparire il count di quante volte è stata scelta quella domanda
-        float sameAnswers = 0f;
+        //sameAnswers = 0f;
         Debug.Log("Graph Incr: " + graphIncr);
         float noVoterCount = 0f;
-        float percSingleClient = (100f / clientAnswersList.Count);
+        percSingleClient = (100f / clientAnswersList.Count);
         Debug.Log("PercSingleClient: " + percSingleClient);
 
         for (int i = 0; i < answerBarList.Count; i++)
@@ -129,20 +129,17 @@ public class GraphLogic : MonoBehaviour {
             {
                 if(clientAnswersList[j] == i)
                 {
-                    Debug.Log("ClientAnswers " + j + ": " + clientAnswersList[j]);
-                    StartCoroutine(FillGraduateGraphCO(answerBarList[i]));
+                    
                     //answerBarList[i].gameObject.GetComponent<Image>().fillAmount += graphIncr;
                     sameAnswers++;
-                    
-                    Debug.Log("nClient: " + clientAnswersList.Count);
-                } 
+                    finalPerc = sameAnswers * percSingleClient;
+                    if (finalPerc >= 99f)
+                        finalPerc = 100;
+                    finalPerc = (int)finalPerc;
 
-                finalPerc = sameAnswers * percSingleClient;
-                if (finalPerc >= 99f)
-                    finalPerc = 100;
-                finalPerc = (int)finalPerc;
-                StartCoroutine(PrintPercCO(answerBarList[i]));
-                //Invoke(PrintPerc(answerBarList[i]), .1f);
+                    StartCoroutine(FillGraduateGraphCO(answerBarList[i]));
+                    StartCoroutine(CalcAndPrintPercCO(answerBarList[i]));
+                }        
                 //answerBarList[i].gameObject.transform.GetChild(0).GetComponent<Text>().text = (finalPerc.ToString() + "%");
             }         
         }
@@ -166,18 +163,23 @@ public class GraphLogic : MonoBehaviour {
 
     private IEnumerator FillGraduateGraphCO(GameObject _go)
     {
-        while (_go.GetComponent<Image>().fillAmount != graphIncr)
+        Debug.LogWarning("DENTRO FILL");
+        float graphIncrNew = graphIncr;
+        if(sameAnswers > 1)
         {
-            _go.GetComponent<Image>().fillAmount += graphIncr * Time.deltaTime;
+            graphIncrNew = graphIncr * sameAnswers;
+        }
+
+        while (_go.GetComponent<Image>().fillAmount <= graphIncrNew)
+        {
+            _go.GetComponent<Image>().fillAmount += graphIncrNew * Time.deltaTime;
             yield return null;
         }
-        yield return new WaitForSeconds(.5f);
-        _go.transform.GetChild(0).GetComponent<Text>().text = (finalPerc.ToString() + "%");
     }
 
-    private IEnumerator PrintPercCO(GameObject _go)
+    private IEnumerator CalcAndPrintPercCO(GameObject _go)
     {
+        yield return new WaitForSeconds(1f);
         _go.transform.GetChild(0).GetComponent<Text>().text = (finalPerc.ToString() + "%");
-        yield return null;
     }
 }
