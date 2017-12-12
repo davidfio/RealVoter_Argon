@@ -141,7 +141,7 @@ public class GraphLogic : MonoBehaviour {
                 if (finalPerc >= 99f)
                     finalPerc = 100;
                 finalPerc = (int)finalPerc;
-                StartCoroutine(FillGraduateGraphCO(answerBarList[i]));
+                StartCoroutine(PrintPercCO(answerBarList[i]));
                 //Invoke(PrintPerc(answerBarList[i]), .1f);
                 //answerBarList[i].gameObject.transform.GetChild(0).GetComponent<Text>().text = (finalPerc.ToString() + "%");
             }         
@@ -173,5 +173,11 @@ public class GraphLogic : MonoBehaviour {
         }
         yield return new WaitForSeconds(.5f);
         _go.transform.GetChild(0).GetComponent<Text>().text = (finalPerc.ToString() + "%");
+    }
+
+    private IEnumerator PrintPercCO(GameObject _go)
+    {
+        _go.transform.GetChild(0).GetComponent<Text>().text = (finalPerc.ToString() + "%");
+        yield return null;
     }
 }
