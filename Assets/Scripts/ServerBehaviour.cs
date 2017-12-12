@@ -32,7 +32,9 @@ public class ServerBehaviour : NetworkBehaviour
     public GameObject buttonStop;
     public bool noMoreQuestion;
 
-#region ParserArea
+    public List<FinalGraphClass> finalGraphPlayerList;
+
+    #region ParserArea
     public TextAsset csvFile; // file CSV da leggere
 
     private char lineSeparater = '\n';
@@ -65,7 +67,6 @@ public class ServerBehaviour : NetworkBehaviour
 
         Invoke("CreateNewGameSession", 1f);
     }
-
 
     //Controlla se ci sono giocatori che hanno abbandonato la sessione e li rimuove dalla playerlist
     private void CleanPlayerList ()
@@ -165,13 +166,13 @@ public class ServerBehaviour : NetworkBehaviour
             CreateNewGameSession();
             refGL.RestartGraph();
             buttonStart.SetActive(true);
-        } else
+        }
+        else
         {
             StartCoroutine(CallResetOnClient());
             questionText.text = ("Fine del questionario. Grazie per aver partecipato!");
             Debug.Log("TELEVOTING FINITO");
-        }
-       
+        }     
     }
 
     //Crea la nuova GameSession e ci aggiunge la domanda corrente
@@ -260,7 +261,6 @@ public class ServerBehaviour : NetworkBehaviour
         //StartCoroutine(TimerCO());
     }
 
-
     //Chiama il reset del client
     public IEnumerator CallResetOnClient()
     {
@@ -318,7 +318,6 @@ public class ServerBehaviour : NetworkBehaviour
     {
         feedbackText.text = "E' stata scelta la risposta " + _answerIndex + " da " + _nameSender;
         Debug.Log("E' stata scelta la risposta " + _answerIndex + " da " + _nameSender);
-
         
         SetupGameSession(_nameSender, _answerIndex);
 
@@ -332,12 +331,33 @@ public class ServerBehaviour : NetworkBehaviour
         if (_answerIndex != -1)
         {
             _answerStringTextToPass = answerStringList[_answerIndex].answerChoose;
-        } else
+
+            // faccio il controllo se la risposta passata abbia il booleano a true
+            if (answerStringList[_answerIndex].isRightAnswer)
+            {
+                // Se si, controllo nella lista finalGraphPlasyerList e controllo che non ci siano altri giocatori con lo stesso nome
+                // in quel caso creo un nuovo FinalGraphClass e gli setto il nome ed il valore del contatore di risposte giuste
+                for (int i = 0; i < finalGraphPlayerList.Count; i++)
+                {
+                    if (finalGraphPlayerList[i].namePlayer != _nameSender)
+                    {
+                        FinalGraphClass newPlayer = new FinalGraphClass(_nameSender, 1);
+                        finalGraphPlayerList.Add(newPlayer);
+                    }
+                    else if (finalGraphPlayerList[i].namePlayer == _nameSender)
+                    {
+                        finalGraphPlayerList[i].counterRightAnswer++;
+                    }
+                }               
+            }
+        }
+        else
         {
             _answerStringTextToPass = "Astenuto";
         }
 
         ClientsClass newClient = new ClientsClass(_nameSender, _answerIndex, _answerStringTextToPass);
+
         Debug.Log(newClient);
         gameSession[currentQuestion].clientClassArch.Add(newClient);
 
