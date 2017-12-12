@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.IO;
 
+
+
 public class ServerBehaviour : NetworkBehaviour
 {
     public List<ClientsClass> clientsList = new List<ClientsClass>();
@@ -44,7 +46,7 @@ public class ServerBehaviour : NetworkBehaviour
 #endregion
 
     // Lista delle risposte da mandare ai Clients
-    public List<string> answerStringList = new List<string>();
+	public List<AnswerClass> answerStringList = new List<AnswerClass>();
 
     // Lista di tutti i Clients
     public List<GameObject> playerList = new List<GameObject>();
@@ -122,6 +124,8 @@ public class ServerBehaviour : NetworkBehaviour
         {
             j++;
 
+            AnswerClass answerReadClass = null;
+
             //Controlliamo se la stringa ha il carattere $ e in caso lo escludiamo
             if (readedData[i].Contains("$"))
             {
@@ -129,11 +133,18 @@ public class ServerBehaviour : NetworkBehaviour
                 //Answerstringlist credo debba diventare una classe che abbia come proprietà il bool corretta
                 //oltre alla stringa di testo della risposta stessa! E poi riadattare tutti i metodi di conseguenza.
 
+
                 readedData[i] = readedData[i].Replace("$", "");
                 Debug.Log("TROVATO $: " + readedData[i].ToString());
+                answerReadClass = new AnswerClass(true, readedData[i]);
+
+            }
+            else
+            {
+                answerReadClass = new AnswerClass(false, readedData[i]);
             }
 
-            answerStringList.Insert(j, readedData[i]);
+            answerStringList.Insert(j, answerReadClass);
             Debug.Log(answerStringList[j]);
         }
     }
@@ -296,7 +307,7 @@ public class ServerBehaviour : NetworkBehaviour
             CleanPlayerList();
             foreach (var player in playerList)
             {
-                player.GetComponent<PlayerBehaviour>().DoRpcSetAnswer(answerStringList[i].ToString(), i);
+                player.GetComponent<PlayerBehaviour>().DoRpcSetAnswer(answerStringList[i].answerChoose.ToString(), i);
             }
         }
         Debug.Log("Ho inviato le risposte in tutti i giocatori");
@@ -320,7 +331,7 @@ public class ServerBehaviour : NetworkBehaviour
         //estrapolo il testo della risposta in base all'indice passato
         if (_answerIndex != -1)
         {
-            _answerStringTextToPass = answerStringList[_answerIndex];
+            _answerStringTextToPass = answerStringList[_answerIndex].answerChoose;
         } else
         {
             _answerStringTextToPass = "Astenuto";

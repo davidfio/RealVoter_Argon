@@ -72,10 +72,10 @@ public class GraphLogic : MonoBehaviour {
             answerBarList.Add(newBar);
 
             //Qua inseriamo il testo e il colore della risposta e della percentuale
-            Debug.LogWarning("answer in graph: " + refSB.answerStringList[i]);
+            Debug.LogWarning("answer in graph: " + refSB.answerStringList[i].answerChoose);
 
             //Fare in modo che appaia come testo della risposta solo il numero tra parentesi così --> (num)
-            string answerTextMod = refSB.answerStringList[i];
+            string answerTextMod = refSB.answerStringList[i].answerChoose;
 
             int startIndex;
             startIndex = answerTextMod.IndexOf(")");
