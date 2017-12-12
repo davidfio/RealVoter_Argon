@@ -141,8 +141,9 @@ public class GraphLogic : MonoBehaviour {
                 if (finalPerc >= 99f)
                     finalPerc = 100;
                 finalPerc = (int)finalPerc;
+                StartCoroutine(FillGraduateGraphCO(answerBarList[i]));
+                //Invoke(PrintPerc(answerBarList[i]), .1f);
                 //answerBarList[i].gameObject.transform.GetChild(0).GetComponent<Text>().text = (finalPerc.ToString() + "%");
-
             }         
         }
 
