@@ -4,16 +4,6 @@
 (3) I diversi tipi di leucociti hanno origine in sedi diverse
 (4) Linfonodi
 --
-I linfociti T mediano:
-(1) La risposta immunitaria innata
-(2) L'immunità cellulare della risposta immunitaria adattativa$
-(3) L'immunità umorale della risposta immunitaria adattativa
---
-I linfociti B mediano:
-(1) La risposta immunitaria innata
-(2) L'immunità cellulare della risposta immunitaria adattativa
-(3) L'immunità umorale della risposta immunitaria adattativa$
---
 L'immunità innata è:
 (1) La prima linea di difesa dell'organismo
 (2) Basata sulla presenza di barriere fisiche all'ingresso dei patogeni 
@@ -21,27 +11,37 @@ L'immunità innata è:
 (4) Basata sulla presenza di cellule che agiscono direttamente contro i patogeni
 (5) Tutte le precedenti$
 --
-Le cellule dell'immunità innata sono:
-(1) Fagociti (principalmente macrofagi e neutrofili), cellule dendritiche, cellule natural killer$
-(2) Linfociti T e B
-(3) Linfociti T citotossici
---
-L'infiammazione è una reazione di difesa dell'organismo; nel sito di infiammazione si accumulano:
-(1) Leucociti e proteine plasmatiche$
-(2) Eritrociti e anticorpi
-(3) Fattori di crescita dell'endotelio
---
 Rispetto all'immunità innata, l'immunità adattativa è:
 (1) Meno rapida; specifica$
 (2) Più rapida; specifica 
 (3) Meno rapida; aspecifica
 (4) Più rapida; aspecifica
 --
+Le cellule dell'immunità innata sono:
+(1) Fagociti (principalmente macrofagi e neutrofili), cellule dendritiche, cellule natural killer$
+(2) Linfociti T e B
+(3) Linfociti T citotossici
+--
 Le Antigen Presenting Cells (APC) sono:
 (1) Cellule dendritiche, globuli rossi, neuroni
 (2) Tutte le cellule dell'organismo possono presentare gli antigeni
 (3) Cellule dendritiche, macrofagi e linfociti B$
 (4) Le cellule «non-self» 
+--
+I linfociti B mediano:
+(1) La risposta immunitaria innata
+(2) L'immunità cellulare della risposta immunitaria adattativa
+(3) L'immunità umorale della risposta immunitaria adattativa$
+--
+I linfociti T mediano:
+(1) La risposta immunitaria innata
+(2) L'immunità cellulare della risposta immunitaria adattativa$
+(3) L'immunità umorale della risposta immunitaria adattativa
+--
+L'infiammazione è una reazione di difesa dell'organismo; nel sito di infiammazione si accumulano:
+(1) Leucociti e proteine plasmatiche$
+(2) Eritrociti e anticorpi
+(3) Fattori di crescita dell'endotelio
 --
 L'attivazione delle cellule T naïve richiede segnali da:
 (1) Complesso recettoriale della cellula T (TCR) 
