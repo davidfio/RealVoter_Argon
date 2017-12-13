@@ -66,10 +66,20 @@ public class ServerBehaviour : NetworkBehaviour
         SetDataFromCSV();
 
         Invoke("CreateNewGameSession", 1f);
+
+        //finalGraphPlayerList = new List<FinalGraphClass>(playerList.Count);
+        for (int i = 0; i < playerList.Count; i++)
+        {
+            FinalGraphClass newPlayer = new FinalGraphClass((("Player" + i).ToString()), 0);
+
+            newPlayer.namePlayer = "Player";
+            finalGraphPlayerList.Add(newPlayer);
+        }
+
     }
 
     //Controlla se ci sono giocatori che hanno abbandonato la sessione e li rimuove dalla playerlist
-    private void CleanPlayerList ()
+    private void CheckLeaverPlayerList ()
     {
 
         Debug.Log("CLEAN");
@@ -197,7 +207,7 @@ public class ServerBehaviour : NetworkBehaviour
         //timerCounter = 0;
         timerText.text = ("Tempo scaduto!");
 
-        CleanPlayerList();
+        CheckLeaverPlayerList();
 
         foreach (var player in playerList)
         {
@@ -219,7 +229,7 @@ public class ServerBehaviour : NetworkBehaviour
     //Termina la fase in cui si può rispondere. Disattiva tutti i bottoni sul client e manda le risposte al graph
     public void StopQuestion ()
     {
-        CleanPlayerList();
+        CheckLeaverPlayerList();
 
         foreach (var player in playerList)
         {
@@ -241,7 +251,7 @@ public class ServerBehaviour : NetworkBehaviour
         Debug.Log("Ho fatto la ricerca dei giocatori");
         Debug.Log("I giocatori ora in gioco sono: " + playerList.Count);
 
-        CleanPlayerList();
+        CheckLeaverPlayerList();
 
         foreach (var player in playerList)
         {
@@ -265,7 +275,7 @@ public class ServerBehaviour : NetworkBehaviour
     public IEnumerator CallResetOnClient()
     {
 
-        CleanPlayerList();
+        CheckLeaverPlayerList();
 
         foreach (var player in playerList)
         {
@@ -278,7 +288,7 @@ public class ServerBehaviour : NetworkBehaviour
     public void CreateButtonOnClient(int _numberOfString)
     {
 
-        CleanPlayerList();
+        CheckLeaverPlayerList();
 
         foreach (var player in playerList)
         {
@@ -290,7 +300,7 @@ public class ServerBehaviour : NetworkBehaviour
     public void SetQuestionOnClient(string _question)
     {
 
-        CleanPlayerList();
+        CheckLeaverPlayerList();
 
         foreach (var player in playerList)
         {
@@ -304,10 +314,10 @@ public class ServerBehaviour : NetworkBehaviour
     {
         for (int i = 0; i < answerStringList.Count; i++)
         {
-            CleanPlayerList();
+            CheckLeaverPlayerList();
             foreach (var player in playerList)
             {
-                player.GetComponent<PlayerBehaviour>().DoRpcSetAnswer(answerStringList[i].answerChoose.ToString(), i);
+                player.GetComponent<PlayerBehaviour>().DoRpcSetAnswer(answerStringList[i].answerText.ToString(), i);
             }
         }
         Debug.Log("Ho inviato le risposte in tutti i giocatori");
@@ -330,26 +340,38 @@ public class ServerBehaviour : NetworkBehaviour
         //estrapolo il testo della risposta in base all'indice passato
         if (_answerIndex != -1)
         {
-            _answerStringTextToPass = answerStringList[_answerIndex].answerChoose;
+            _answerStringTextToPass = answerStringList[_answerIndex].answerText;
 
             // faccio il controllo se la risposta passata abbia il booleano a true
             if (answerStringList[_answerIndex].isRightAnswer)
             {
+                Debug.LogError("DENTRO L'IF DEL BOOL TRUE");
                 // Se si, controllo nella lista finalGraphPlasyerList e controllo che non ci siano altri giocatori con lo stesso nome
                 // in quel caso creo un nuovo FinalGraphClass e gli setto il nome ed il valore del contatore di risposte giuste
                 for (int i = 0; i < finalGraphPlayerList.Count; i++)
                 {
-                    if (finalGraphPlayerList[i].namePlayer != _nameSender)
+
+                    if (finalGraphPlayerList[i].namePlayer == "")
                     {
+
+                        Debug.LogError("DENTRO L'IF DEL NULL");
                         FinalGraphClass newPlayer = new FinalGraphClass(_nameSender, 1);
-                        finalGraphPlayerList.Add(newPlayer);
+                        finalGraphPlayerList.Remove(finalGraphPlayerList[i]);
+                        finalGraphPlayerList.Insert(i, newPlayer);
+                        break;
                     }
                     else if (finalGraphPlayerList[i].namePlayer == _nameSender)
                     {
                         finalGraphPlayerList[i].counterRightAnswer++;
                     }
-                }               
+
+                }    
             }
+            else
+            {
+                Debug.LogError("LA RISPOSTA DATA E' ERRATA");
+            }
+
         }
         else
         {

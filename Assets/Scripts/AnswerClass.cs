@@ -7,11 +7,11 @@ using System;
 public class AnswerClass 
 {
     public bool isRightAnswer;
-    public string answerChoose;
+    public string answerText;
 
     public AnswerClass(bool _isRight, string _answerStringText)
     {
         isRightAnswer = _isRight;
-        answerChoose = _answerStringText;
+        answerText = _answerStringText;
     }
 }
