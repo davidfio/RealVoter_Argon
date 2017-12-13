@@ -62,7 +62,7 @@ public class PlayerBehaviour : NetworkBehaviour
                 playerList[i].SetActive(false);
             }
         }
-        identifierText.text = this.gameObject.name;
+        //identifierText.text = this.gameObject.name;
     }
 
     public void ChangeClientName()

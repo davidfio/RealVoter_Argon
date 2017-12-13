@@ -33,7 +33,7 @@ public class ServerBehaviour : NetworkBehaviour
     public GameObject buttonResults;
     public bool noMoreQuestion;
 
-    public List<FinalGraphClass> finalGraphPlayerList;
+    public List<FinalGraphClass> finalGraphPlayerList = new List<FinalGraphClass>();
 
     #region ParserArea
     public TextAsset csvFile; // file CSV da leggere
@@ -67,15 +67,6 @@ public class ServerBehaviour : NetworkBehaviour
         SetDataFromCSV();
 
         Invoke("CreateNewGameSession", 1f);
-
-        //finalGraphPlayerList = new List<FinalGraphClass>(playerList.Count);
-        for (int i = 0; i < playerList.Count; i++)
-        {
-            FinalGraphClass newPlayer = new FinalGraphClass((("Player" + i).ToString()), 0);
-
-            newPlayer.namePlayer = "Player";
-            finalGraphPlayerList.Add(newPlayer);
-        }
 
     }
 
@@ -172,7 +163,7 @@ public class ServerBehaviour : NetworkBehaviour
             currentQuestion++;
             endCSVIndex++;
             startCSVIndex = endCSVIndex;
-            timerText.text = ("Tempo");
+            timerText.text = ("Attendere l'inizio della sessione...");
             SetDataFromCSV();
             CreateNewGameSession();
             refGL.RestartGraph();
@@ -231,6 +222,8 @@ public class ServerBehaviour : NetworkBehaviour
     //Termina la fase in cui si può rispondere. Disattiva tutti i bottoni sul client e manda le risposte al graph
     public void StopQuestion ()
     {
+        timerText.text = ("Risultati sessione:");
+
         CheckLeaverPlayerList();
 
         foreach (var player in playerList)
@@ -259,6 +252,18 @@ public class ServerBehaviour : NetworkBehaviour
         {
             Debug.Log(player.GetComponentInChildren<PlayerBehaviour>().name);
         }
+
+        //Crea le posizioni nella lista di finalGraphPlayerList
+        for (int i = 0; i < playerList.Count; i++)
+        {
+            //Debug.LogError("INIZIALIZZA GRAPH PLAYER!!!");
+            FinalGraphClass newPlayer = new FinalGraphClass((("Default Player " + i).ToString()), 0);
+
+            finalGraphPlayerList.Add(newPlayer);
+        }
+
+        timerText.text = ("Attendere l'inizio della sessione...");
+
     }
 
     //Setta tutto il necessario sui client
@@ -271,6 +276,8 @@ public class ServerBehaviour : NetworkBehaviour
         SetAnswerOnClient();
 
         //StartCoroutine(TimerCO());
+        timerText.text = ("Sessione domande in corso...");
+
     }
 
     //Chiama il reset del client
@@ -328,7 +335,7 @@ public class ServerBehaviour : NetworkBehaviour
     // Prendo la risposta scelta dai clients
     public void SetAnswerOnServer(string _nameSender, int _answerIndex)
     {
-        feedbackText.text = "E' stata scelta la risposta " + _answerIndex + " da " + _nameSender;
+        //feedbackText.text = "E' stata scelta la risposta " + _answerIndex + " da " + _nameSender;
         Debug.Log("E' stata scelta la risposta " + _answerIndex + " da " + _nameSender);
         
         SetupGameSession(_nameSender, _answerIndex);
@@ -350,21 +357,21 @@ public class ServerBehaviour : NetworkBehaviour
             for (int i = 0; i < finalGraphPlayerList.Count; i++)
             {
 
-                if (finalGraphPlayerList[i].namePlayer == "")
+                if (finalGraphPlayerList[i].namePlayer.Contains("Player"))
                 {
-
-                    Debug.LogError("DENTRO L'IF DEL NULL");
-                    // faccio il controllo se la risposta passata abbia il booleano a true
+                    //Debug.LogError("DENTRO L'IF DEL NULL");
+                    
+                    //Faccio il controllo se la risposta passata abbia il booleano a true
                     if (answerStringList[_answerIndex].isRightAnswer)
                     {
-                        Debug.LogError("DENTRO L'IF DEL BOOL TRUE");
+                        //Debug.LogError("DENTRO L'IF DEL BOOL TRUE");
                         FinalGraphClass newPlayer = new FinalGraphClass(_nameSender, 1);
                         finalGraphPlayerList.Remove(finalGraphPlayerList[i]);
                         finalGraphPlayerList.Insert(i, newPlayer);
                         break;
                     } else
                     {
-                        Debug.LogError("DENTRO L'IF DEL BOOL FALSE");
+                        //Debug.LogError("DENTRO L'IF DEL BOOL FALSE");
                         FinalGraphClass newPlayer = new FinalGraphClass(_nameSender, 0);
                         finalGraphPlayerList.Remove(finalGraphPlayerList[i]);
                         finalGraphPlayerList.Insert(i, newPlayer);
