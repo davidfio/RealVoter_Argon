@@ -30,6 +30,7 @@ public class ServerBehaviour : NetworkBehaviour
 
     public GameObject buttonStart;
     public GameObject buttonStop;
+    public GameObject buttonResults;
     public bool noMoreQuestion;
 
     public List<FinalGraphClass> finalGraphPlayerList;
@@ -181,6 +182,7 @@ public class ServerBehaviour : NetworkBehaviour
         {
             StartCoroutine(CallResetOnClient());
             questionText.text = ("Fine del questionario. Grazie per aver partecipato!");
+            buttonResults.SetActive(true);
             Debug.Log("TELEVOTING FINITO");
         }     
     }
@@ -342,35 +344,43 @@ public class ServerBehaviour : NetworkBehaviour
         {
             _answerStringTextToPass = answerStringList[_answerIndex].answerText;
 
-            // faccio il controllo se la risposta passata abbia il booleano a true
-            if (answerStringList[_answerIndex].isRightAnswer)
+
+            // Se si, controllo nella lista finalGraphPlasyerList e controllo che non ci siano altri giocatori con lo stesso nome
+            // in quel caso creo un nuovo FinalGraphClass e gli setto il nome ed il valore del contatore di risposte giuste
+            for (int i = 0; i < finalGraphPlayerList.Count; i++)
             {
-                Debug.LogError("DENTRO L'IF DEL BOOL TRUE");
-                // Se si, controllo nella lista finalGraphPlasyerList e controllo che non ci siano altri giocatori con lo stesso nome
-                // in quel caso creo un nuovo FinalGraphClass e gli setto il nome ed il valore del contatore di risposte giuste
-                for (int i = 0; i < finalGraphPlayerList.Count; i++)
+
+                if (finalGraphPlayerList[i].namePlayer == "")
                 {
 
-                    if (finalGraphPlayerList[i].namePlayer == "")
+                    Debug.LogError("DENTRO L'IF DEL NULL");
+                    // faccio il controllo se la risposta passata abbia il booleano a true
+                    if (answerStringList[_answerIndex].isRightAnswer)
                     {
-
-                        Debug.LogError("DENTRO L'IF DEL NULL");
+                        Debug.LogError("DENTRO L'IF DEL BOOL TRUE");
                         FinalGraphClass newPlayer = new FinalGraphClass(_nameSender, 1);
                         finalGraphPlayerList.Remove(finalGraphPlayerList[i]);
                         finalGraphPlayerList.Insert(i, newPlayer);
                         break;
+                    } else
+                    {
+                        Debug.LogError("DENTRO L'IF DEL BOOL FALSE");
+                        FinalGraphClass newPlayer = new FinalGraphClass(_nameSender, 0);
+                        finalGraphPlayerList.Remove(finalGraphPlayerList[i]);
+                        finalGraphPlayerList.Insert(i, newPlayer);
+                        break;
                     }
-                    else if (finalGraphPlayerList[i].namePlayer == _nameSender)
+                }
+                else if (finalGraphPlayerList[i].namePlayer == _nameSender)
+                {
+                    if (answerStringList[_answerIndex].isRightAnswer)
                     {
                         finalGraphPlayerList[i].counterRightAnswer++;
                     }
+                }
 
-                }    
-            }
-            else
-            {
-                Debug.LogError("LA RISPOSTA DATA E' ERRATA");
-            }
+            }    
+            
 
         }
         else

@@ -182,4 +182,69 @@ public class GraphLogic : MonoBehaviour {
         yield return new WaitForSeconds(1f);
         _go.transform.GetChild(0).GetComponent<Text>().text = (finalPerc.ToString() + "%");
     }
+
+
+    public void FinalGraphSetup()
+    {
+        //Ripuliamo il graph
+        for (int i = 0; i < answerBarList.Count; i++)
+        {
+            Destroy(answerBarList[i]);
+        }
+        answerBarList.Clear();
+        clientList.Clear();
+        clientAnswersList.Clear();
+
+        //Creiamo il graph con tante barre quanto il numero dei player
+        for (int i = 0; i < refSB.finalGraphPlayerList.Count; i++)
+        {
+            GameObject newBar = Instantiate(barPrefab);
+            newBar.gameObject.transform.SetParent(this.gameObject.transform);
+            newBar.gameObject.GetComponent<RectTransform>().localScale = Vector3.one;
+            newBar.gameObject.GetComponent<Image>().color = answerColors[i];
+            answerBarList.Add(newBar);
+
+            //Aumentiamo lo spazio tra le barre
+            this.gameObject.GetComponent<HorizontalLayoutGroup>().spacing = 130;
+
+            //Settiamo nel answerText il nome del player
+            answerBarList[i].gameObject.transform.GetChild(1).GetComponent<Text>().text = refSB.finalGraphPlayerList[i].namePlayer;
+
+            //Chiamiamo la coroutine che riempie la barra
+            StartCoroutine(FillGraduateFinalGraphCO(answerBarList[i], refSB.finalGraphPlayerList[i].counterRightAnswer));
+
+            //Chiamiamo la coroutine che setta il numero di risposte
+            StartCoroutine(SetNumCorrectAnswersFinalGraph(answerBarList[i], refSB.finalGraphPlayerList[i].counterRightAnswer));
+        }
+
+
+    }
+
+
+    private IEnumerator FillGraduateFinalGraphCO(GameObject _go, int nCorrectAnswers)
+    {
+        Debug.LogWarning("DENTRO FILL FINAL GRAPH");
+
+        //Incrementiamo la barra di 1/nDomande * nRispCorrette
+
+        float graphIncrFinal = 1f/ refSB.gameSession.Count;
+
+        float finalIncrValue = graphIncrFinal * nCorrectAnswers;
+
+        while (_go.GetComponent<Image>().fillAmount <= finalIncrValue)
+        {
+            _go.GetComponent<Image>().fillAmount += graphIncrFinal * Time.deltaTime;
+            yield return null;
+        }
+
+    }
+
+
+    //Settiamo dentro nAnswerCounter il n° di risposte corrette date dal player
+    private IEnumerator SetNumCorrectAnswersFinalGraph(GameObject _go, int nCorrectAnswers)
+    {
+        yield return new WaitForSeconds(1f);
+        _go.transform.GetChild(0).GetComponent<Text>().text = nCorrectAnswers.ToString();
+    }
+
 }
