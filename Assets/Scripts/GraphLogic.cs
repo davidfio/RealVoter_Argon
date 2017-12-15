@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GraphLogic : MonoBehaviour {
 
     public int nAnswers;
-    public float graphIncr, finalPerc, sameAnswers, percSingleClient;
+    //public float graphIncr, finalPerc, sameAnswers, percSingleClient;
     public List<GameObject> answerBarList = new List<GameObject>();
     public GameObject barPrefab;
 
@@ -22,6 +22,7 @@ public class GraphLogic : MonoBehaviour {
 
     public Text noVoterText;
     public GameObject nextQuestionButton;
+    public int nTryQuestion;
 
     IEnumerator Start ()
     {
@@ -114,60 +115,62 @@ public class GraphLogic : MonoBehaviour {
     //Se la risposta corrisponde a i allora aggiungi altrimenti passa avanti
     public void FillGraph()
     { 
-        graphIncr = 1f / clientAnswersList.Count;
+        float graphIncr = 1f / clientAnswersList.Count;
         //Serve a far comparire il count di quante volte è stata scelta quella domanda
-        //sameAnswers = 0f;
+        float sameAnswers = 0f;
         Debug.Log("Graph Incr: " + graphIncr);
-        float noVoterCount = 0f;
-        percSingleClient = (100f / clientAnswersList.Count);
+        //float noVoterCount = 0f;
+        float percSingleClient = (100f / clientAnswersList.Count);
         Debug.Log("PercSingleClient: " + percSingleClient);
 
         for (int i = 0; i < answerBarList.Count; i++)
         {
             sameAnswers = 0;
+
             for (int j = 0; j < clientAnswersList.Count; j++)
             {
                 if(clientAnswersList[j] == i)
-                {
-                    
+                {            
                     //answerBarList[i].gameObject.GetComponent<Image>().fillAmount += graphIncr;
                     sameAnswers++;
-                    finalPerc = sameAnswers * percSingleClient;
+                    float finalPerc = sameAnswers * percSingleClient;
                     if (finalPerc >= 99f)
                         finalPerc = 100;
                     finalPerc = (int)finalPerc;
 
-                    StartCoroutine(FillGraduateGraphCO(answerBarList[i]));
-                    StartCoroutine(CalcAndPrintPercCO(answerBarList[i]));
-                }        
+                    StartCoroutine(FillGraduateGraphCO((answerBarList[i]), graphIncr, sameAnswers));
+                    StartCoroutine(CalcAndPrintPercCO((answerBarList[i]), finalPerc));
+                    Debug.LogError("SameAnswer: " + sameAnswers);
+                    Debug.LogError("FinalPerc: " + finalPerc);
+
+                }
                 //answerBarList[i].gameObject.transform.GetChild(0).GetComponent<Text>().text = (finalPerc.ToString() + "%");
             }         
         }
 
+        //for (int j = 0; j < clientAnswersList.Count; j++)
+        //{
+        //    if (clientAnswersList[j] == -1)
+        //    {
+        //        noVoterCount++;
+        //        Debug.Log("No Voter Count: " + noVoterCount);
+        //    }
+        //}
 
-        for (int j = 0; j < clientAnswersList.Count; j++)
-        {
-            if (clientAnswersList[j] == -1)
-            {
-                noVoterCount++;
-                Debug.Log("No Voter Count: " + noVoterCount);
-            }
-        }
-
-        float percNoVoters = noVoterCount * percSingleClient;
-        if (percNoVoters >= 99f)
-            percNoVoters = 100;
-        percNoVoters = (int)percNoVoters;
-        noVoterText.text = ("Astenuti: " + percNoVoters.ToString() + "%");
+        //float percNoVoters = noVoterCount * percSingleClient;
+        //if (percNoVoters >= 99f)
+        //    percNoVoters = 100;
+        //percNoVoters = (int)percNoVoters;
+        //noVoterText.text = ("Astenuti: " + percNoVoters.ToString() + "%");
     }
 
-    private IEnumerator FillGraduateGraphCO(GameObject _go)
+    private IEnumerator FillGraduateGraphCO(GameObject _go, float _graphIncr, float _sameAnswers)
     {
         Debug.LogWarning("DENTRO FILL");
-        float graphIncrNew = graphIncr;
-        if(sameAnswers > 1)
+        float graphIncrNew = _graphIncr;
+        if(_sameAnswers > 1)
         {
-            graphIncrNew = graphIncr * sameAnswers;
+            graphIncrNew = _graphIncr * _sameAnswers;
         }
 
         while (_go.GetComponent<Image>().fillAmount <= graphIncrNew)
@@ -177,12 +180,11 @@ public class GraphLogic : MonoBehaviour {
         }
     }
 
-    private IEnumerator CalcAndPrintPercCO(GameObject _go)
+    private IEnumerator CalcAndPrintPercCO(GameObject _go, float _finalPerc)
     {
-        yield return new WaitForSeconds(1f);
-        _go.transform.GetChild(0).GetComponent<Text>().text = (finalPerc.ToString() + "%");
+        yield return null; //new WaitForSeconds(1f);
+        _go.transform.GetChild(0).GetComponent<Text>().text = (_finalPerc.ToString() + "%");
     }
-
 
     public void FinalGraphSetup()
     {
@@ -214,20 +216,18 @@ public class GraphLogic : MonoBehaviour {
             StartCoroutine(FillGraduateFinalGraphCO(answerBarList[i], refSB.finalGraphPlayerList[i].counterRightAnswer));
 
             //Chiamiamo la coroutine che setta il numero di risposte
-            StartCoroutine(SetNumCorrectAnswersFinalGraph(answerBarList[i], refSB.finalGraphPlayerList[i].counterRightAnswer));
+            //StartCoroutine(SetNumCorrectAnswersFinalGraph(answerBarList[i], refSB.finalGraphPlayerList[i].counterRightAnswer));
         }
-
-
     }
-
 
     private IEnumerator FillGraduateFinalGraphCO(GameObject _go, int nCorrectAnswers)
     {
         Debug.LogWarning("DENTRO FILL FINAL GRAPH");
 
         //Incrementiamo la barra di 1/nDomande * nRispCorrette
+        int nQuestion = refSB.gameSession.Count - nTryQuestion;
 
-        float graphIncrFinal = 1f/ refSB.gameSession.Count;
+        float graphIncrFinal = 1f / nQuestion;
 
         float finalIncrValue = graphIncrFinal * nCorrectAnswers;
 
@@ -236,14 +236,14 @@ public class GraphLogic : MonoBehaviour {
             _go.GetComponent<Image>().fillAmount += graphIncrFinal * Time.deltaTime;
             yield return null;
         }
-
+        // Chiamo qui la coroutine per far stampare il numero in questo modo è indipendente da quanto veloce si riempione le barre
+        StartCoroutine(SetNumCorrectAnswersFinalGraph(_go, nCorrectAnswers));
     }
-
 
     //Settiamo dentro nAnswerCounter il n° di risposte corrette date dal player
     private IEnumerator SetNumCorrectAnswersFinalGraph(GameObject _go, int nCorrectAnswers)
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.5f);
         _go.transform.GetChild(0).GetComponent<Text>().text = nCorrectAnswers.ToString();
     }
 
