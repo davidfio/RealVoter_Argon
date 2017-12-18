@@ -216,7 +216,7 @@ public class GraphLogic : MonoBehaviour {
             StartCoroutine(FillGraduateFinalGraphCO(answerBarList[i], refSB.finalGraphPlayerList[i].counterRightAnswer));
 
             //Chiamiamo la coroutine che setta il numero di risposte
-            //StartCoroutine(SetNumCorrectAnswersFinalGraph(answerBarList[i], refSB.finalGraphPlayerList[i].counterRightAnswer));
+            StartCoroutine(SetNumCorrectAnswersFinalGraph(answerBarList[i], refSB.finalGraphPlayerList[i].counterRightAnswer));
         }
     }
 
@@ -236,15 +236,18 @@ public class GraphLogic : MonoBehaviour {
             _go.GetComponent<Image>().fillAmount += graphIncrFinal * Time.deltaTime;
             yield return null;
         }
-        // Chiamo qui la coroutine per far stampare il numero in questo modo è indipendente da quanto veloce si riempione le barre
-        StartCoroutine(SetNumCorrectAnswersFinalGraph(_go, nCorrectAnswers));
+        //// Chiamo qui la coroutine per far stampare il numero in questo modo è indipendente da quanto veloce si riempione le barre
+        //StartCoroutine(SetNumCorrectAnswersFinalGraph(_go, nCorrectAnswers));
     }
 
     //Settiamo dentro nAnswerCounter il n° di risposte corrette date dal player
     private IEnumerator SetNumCorrectAnswersFinalGraph(GameObject _go, int nCorrectAnswers)
     {
-        yield return new WaitForSeconds(.5f);
+        Debug.LogError(nCorrectAnswers);
+        yield return new WaitForSeconds(nCorrectAnswers);
         _go.transform.GetChild(0).GetComponent<Text>().text = nCorrectAnswers.ToString();
+
+
     }
 
 }
